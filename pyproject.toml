@@ -21,6 +21,9 @@ dev = [
     "pytest>=8.3.0",
     "pytest-asyncio>=0.24.0",
     "pre-commit>=3.8.0",
+    "types-redis>=4.6.0.20241004",
+    "lxml-stubs>=0.5.1",
+    "types-requests>=2.32.4.20250913",
 ]
 
 [tool.ruff]
@@ -37,3 +40,20 @@ strict = true
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
+
+# Workspace configuration
+namespace_packages = true
+explicit_package_bases = true
+
+# Ignore missing imports for external packages without stubs
+[[tool.mypy.overrides]]
+module = [
+    "openai.*",
+    "fastapi.*",
+    "langchain_core.*",
+    "langchain_openai.*",
+    "langgraph.*",
+    "tiktoken.*",
+    "wandb.*"
+]
+ignore_missing_imports = true

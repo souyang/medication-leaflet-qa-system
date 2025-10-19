@@ -3,7 +3,7 @@
 from rag_health_retrieval import chunk_text
 
 
-def test_chunk_text_short():
+def test_chunk_text_short() -> None:
     """Test chunking of text shorter than chunk size."""
     text = "Short text."
     chunks = chunk_text(text, chunk_size=100, overlap=10)
@@ -11,7 +11,7 @@ def test_chunk_text_short():
     assert chunks[0] == text
 
 
-def test_chunk_text_long():
+def test_chunk_text_long() -> None:
     """Test chunking of long text with overlap."""
     # Create text that will require multiple chunks
     text = " ".join([f"Word{i}" for i in range(2000)])
@@ -27,7 +27,7 @@ def test_chunk_text_long():
         )
 
 
-def test_chunk_text_empty():
+def test_chunk_text_empty() -> None:
     """Test chunking empty text."""
     chunks = chunk_text("", chunk_size=100, overlap=10)
     assert len(chunks) == 0
