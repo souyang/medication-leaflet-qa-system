@@ -43,6 +43,8 @@ class RedisClient:
         schema = (
             TagField("$.drug_name", as_name="drug"),
             TagField("$.section", as_name="section"),
+            TagField("$.section_id", as_name="section_id"),
+            TagField("$.url", as_name="url"),
             NumericField("$.version", as_name="version"),
             TextField("$.text", as_name="text"),
             VectorField(
