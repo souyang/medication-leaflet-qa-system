@@ -12,6 +12,8 @@ Production-credible RAG system for healthcare drug-label Q&A using FDA SPL data.
          [LangGraph Agent: route→retrieve→answer→verify→finalize]
                                     ↓
                          [FastAPI] ← [W&B Evals]
+                                    ↓
+                         [Next.js Frontend]
 ```
 
 ## Key Features
@@ -20,6 +22,7 @@ Production-credible RAG system for healthcare drug-label Q&A using FDA SPL data.
 - **LangGraph agent**: Multi-node verification pipeline with confidence checks
 - **Redis Stack**: HNSW vector search with metadata filtering (drug, section, version)
 - **W&B observability**: Traces and evals with regression gates
+- **Next.js Frontend**: Modern web interface with TypeScript, Tailwind, and shadcn/ui
 - **Monorepo structure**: Ready for future crawlers and frontend expansion
 
 ## Quick Start
@@ -27,9 +30,11 @@ Production-credible RAG system for healthcare drug-label Q&A using FDA SPL data.
 ### Prerequisites
 
 - Python 3.11+
+- Node.js 18+
 - Docker & Docker Compose
 - [just](https://github.com/casey/just) (task runner)
 - [uv](https://github.com/astral-sh/uv) (Python package manager)
+- [pnpm](https://pnpm.io/) (Node.js package manager)
 - OpenAI API key
 
 ### Setup
@@ -52,6 +57,7 @@ just setup
 
 This will:
 - Install all Python dependencies via uv workspace
+- Install all Node.js dependencies via pnpm
 - Start Redis Stack in Docker
 - Create the search index
 - Ingest 5 default drugs (metformin, lisinopril, atorvastatin, levothyroxine, amlodipine)
@@ -59,16 +65,16 @@ This will:
 ### Usage
 
 ```bash
-# Start API server
-just dev-api
+# Start full stack (API + Web frontend)
+just dev
 
-# In another terminal, ask questions
+# Or start services individually:
+just dev-api    # API server on http://localhost:8000
+just dev-web    # Web frontend on http://localhost:3001
+
+# Command line usage:
 just ask Q="What is the starting dose?" DRUG="metformin"
-
-# Ingest a new drug
 just ingest DRUG="aspirin"
-
-# Run evaluations
 just eval
 
 # Check health

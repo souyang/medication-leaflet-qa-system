@@ -16,6 +16,22 @@ stop-redis:
 dev-api:
     cd apps/api && PYTHONPATH=. uv run uvicorn app.api:app --reload --port 8000
 
+# Start web frontend
+dev-web:
+    pnpm --filter web dev
+
+# Start both API and web
+dev:
+    @echo "Starting full stack development..."
+    @echo "API: http://localhost:8000"
+    @echo "Web: http://localhost:3001"
+    @echo "Press Ctrl+C to stop all services"
+    #!/usr/bin/env bash
+    trap 'kill %1 %2' SIGINT
+    just dev-api &
+    just dev-web &
+    wait
+
 # Create Redis index
 create-index DROP="false":
     uv run --project apps/api python -c "from app.api import settings; from rag_health_retrieval import RedisClient; RedisClient(settings).create_index(drop_existing={{DROP}}=='true')"
@@ -63,12 +79,13 @@ install-hooks:
 setup:
     @echo "Setting up RAG Health development environment..."
     uv sync
+    pnpm install
     just install-hooks
     just dev-redis
     @echo "Waiting for Redis..."
     sleep 3
     just seed
-    @echo "✓ Setup complete. Run 'just dev-api' to start the API."
+    @echo "✓ Setup complete. Run 'just dev' to start both API and web frontend."
 
 # Health check
 health:

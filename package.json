@@ -1,0 +1,25 @@
+{
+  "name": "medication-leaflet-qa-system",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"just dev-api\" \"just dev-web\"",
+    "build": "pnpm --filter web build",
+    "start": "pnpm --filter web start",
+    "test": "uv run pytest && pnpm --filter web test",
+    "lint": "uv run ruff check . && pnpm --filter web lint",
+    "typecheck": "uv run mypy . && pnpm --filter web typecheck",
+    "format": "uv run ruff format . && pnpm --filter web format"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3"
+  }
+}
