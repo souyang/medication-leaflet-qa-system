@@ -38,7 +38,7 @@ If unclear, return all sections."""
     def format_user_prompt(query: str, contexts: list[dict[str, str]]) -> str:
         """Format user prompt with query and contexts."""
         context_text = "\n\n---\n\n".join(
-            f"[{i+1}] Section: {ctx['section']}\n{ctx['text']}\nCitation: {ctx['citation']}"
+            f"[{i + 1}] Section: {ctx['section']}\n{ctx['text']}\nCitation: {ctx['citation']}"
             for i, ctx in enumerate(contexts)
         )
         return RAGPrompts.USER_TEMPLATE.format(
