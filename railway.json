@@ -1,7 +1,23 @@
 {
   "deploy": {
-    "startCommand": "cd apps/api && PYTHONPATH=. uvicorn app.api:app --host 0.0.0.0 --port $PORT",
-    "healthcheckPath": "/health",
+    "startCommand": "cd apps/web && npm start",
+    "healthcheckPath": "/",
     "healthcheckTimeout": 100
-  }
+  },
+  "services": [
+    {
+      "name": "rag-health-api",
+      "source": "apps/api",
+      "buildCommand": "pip install uv && uv sync",
+      "startCommand": "cd apps/api && PYTHONPATH=. uvicorn app.api:app --host 0.0.0.0 --port $PORT",
+      "healthcheckPath": "/health"
+    },
+    {
+      "name": "rag-health-web",
+      "source": "apps/web",
+      "buildCommand": "npm install -g pnpm && pnpm install && pnpm --filter web build",
+      "startCommand": "pnpm --filter web start",
+      "healthcheckPath": "/"
+    }
+  ]
 }
