@@ -77,6 +77,10 @@ just ask Q="What is the starting dose?" DRUG="metformin"
 just ingest DRUG="aspirin"
 just eval
 
+# Deploy to Railway (production)
+just deploy     # Full-stack deployment
+just deploy-backend  # Backend only
+
 # Check health
 just health
 

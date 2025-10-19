@@ -95,16 +95,38 @@ health:
 stats:
     curl -s http://localhost:8000/stats | jq
 
-# Full stack up (Docker)
+# Backend only (Docker)
 up:
     docker compose -f infra/docker-compose.yml up -d
+
+# Full stack up (Docker) - Backend + Frontend
+up-fullstack:
+    docker compose -f infra/docker-compose.fullstack.yml up -d
 
 # Full stack down
 down:
     docker compose -f infra/docker-compose.yml down
+    docker compose -f infra/docker-compose.fullstack.yml down
 
 # Clean all artifacts
 clean:
     rm -rf .pytest_cache .mypy_cache .ruff_cache
     find . -type d -name "__pycache__" -exec rm -rf {} +
     find . -type d -name "*.egg-info" -exec rm -rf {} +
+
+# Deploy backend only to Railway
+deploy-backend:
+    @echo "Deploying backend to Railway..."
+    railway up
+
+# Deploy fullstack to Railway (recommended)
+deploy:
+    @echo "Deploying fullstack to Railway..."
+    cp railway.fullstack.json railway.json
+    railway up
+
+# Deploy fullstack to Railway (alias)
+deploy-fullstack:
+    @echo "Deploying fullstack to Railway..."
+    cp railway.fullstack.json railway.json
+    railway up

@@ -82,6 +82,18 @@ REDIS_HOST=localhost
 REDIS_PORT=6379
 ```
 
+## **Deployment Commands**
+
+```bash
+# Local development
+just up-fullstack  # Full-stack locally
+just up            # Backend only locally
+
+# Railway deployment (production)
+just deploy        # Full-stack deployment
+just deploy-backend # Backend only
+```
+
 ## **Common Workflows**
 
 ### **Add New API Endpoint**
@@ -93,6 +105,11 @@ REDIS_PORT=6379
 1. Create page in `apps/web/app/new-page/page.tsx`
 2. Add API client in `apps/web/src/lib/fetch.ts`
 3. Test with `pnpm --filter web dev`
+
+### **Deploy to Production**
+1. Run `just deploy` to deploy full-stack
+2. Set environment variables in Railway dashboard
+3. Test with `curl https://your-app.railway.app/health`
 
 ### **Debug Issues**
 1. Check `just health` - API working?
