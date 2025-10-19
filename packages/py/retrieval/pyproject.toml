@@ -1,0 +1,14 @@
+[project]
+name = "rag-health-retrieval"
+version = "0.1.0"
+description = "Redis adapters, index DDL, and retrieval logic"
+requires-python = ">=3.11"
+dependencies = [
+    "rag-health-core",
+    "redis[hiredis]>=5.1.0",
+    "openai>=1.50.0",
+    "tiktoken>=0.7.0",
+]
+
+[tool.uv.sources]
+rag-health-core = { workspace = true }

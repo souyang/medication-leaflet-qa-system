@@ -1,0 +1,1 @@
+"""RAG Health API application."""

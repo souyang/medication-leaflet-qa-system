@@ -1,0 +1,9 @@
+[project]
+name = "rag-health-core"
+version = "0.1.0"
+description = "Shared types, prompts, and utilities"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.9.0",
+    "pydantic-settings>=2.5.0",
+]

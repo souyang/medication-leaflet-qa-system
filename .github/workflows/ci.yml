@@ -1,0 +1,113 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint-and-typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Lint with ruff
+        run: uv run ruff check .
+
+      - name: Type check with mypy
+        run: uv run mypy packages/py apps/api apps/evals
+
+  test:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis/redis-stack:latest
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run tests
+        run: uv run pytest
+        env:
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+  evals:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [lint-and-typecheck, test]
+    services:
+      redis:
+        image: redis/redis-stack:latest
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Start API server
+        run: |
+          uv run --project apps/api uvicorn app.api:app --host 0.0.0.0 --port 8000 &
+          sleep 10
+        env:
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Seed test data
+        run: uv run --project apps/api python apps/api/scripts/seed_ingest.py --create-index --drug metformin
+        env:
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Run evaluations
+        run: uv run --project apps/evals python apps/evals/app/evals.py
+        env:
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+          WANDB_MODE: disabled  # Disable W&B in CI for now
