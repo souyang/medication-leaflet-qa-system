@@ -114,19 +114,21 @@ clean:
     find . -type d -name "__pycache__" -exec rm -rf {} +
     find . -type d -name "*.egg-info" -exec rm -rf {} +
 
-# Deploy backend only to Railway
+# Deploy backend to Railway
+deploy:
+    @echo "Deploying backend to Railway..."
+    railway up
+
+# Deploy backend to Railway (alias)
 deploy-backend:
     @echo "Deploying backend to Railway..."
     railway up
 
-# Deploy fullstack to Railway (recommended)
-deploy:
-    @echo "Deploying fullstack to Railway..."
-    cp railway.fullstack.json railway.json
-    railway up
-
-# Deploy fullstack to Railway (alias)
-deploy-fullstack:
-    @echo "Deploying fullstack to Railway..."
-    cp railway.fullstack.json railway.json
-    railway up
+# Setup Railway project (first time only)
+setup-railway:
+    @echo "Setting up Railway project..."
+    @echo "1. Make sure you're logged in: railway login"
+    @echo "2. Create a new project or link to existing one:"
+    @echo "   - railway init (creates new project)"
+    @echo "   - railway link (links to existing project)"
+    @echo "3. Then run: just deploy"
