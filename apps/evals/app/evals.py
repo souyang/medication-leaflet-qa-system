@@ -6,8 +6,9 @@ import time
 from typing import Any
 
 import httpx
-import wandb
 from rag_health_core import Settings
+
+import wandb
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

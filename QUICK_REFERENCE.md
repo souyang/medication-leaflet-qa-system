@@ -89,9 +89,8 @@ REDIS_PORT=6379
 just up-fullstack  # Full-stack locally
 just up            # Backend only locally
 
-# Railway deployment (production)
-just deploy        # Full-stack deployment
-just deploy-backend # Backend only
+# Production deployment
+just deploy        # Deploy using available methods
 ```
 
 ## **Common Workflows**
@@ -107,9 +106,9 @@ just deploy-backend # Backend only
 3. Test with `pnpm --filter web dev`
 
 ### **Deploy to Production**
-1. Run `just deploy` to deploy full-stack
-2. Set environment variables in Railway dashboard
-3. Test with `curl https://your-app.railway.app/health`
+1. Run `just deploy` to see available deployment options
+2. Follow the deployment method of your choice
+3. Test with `curl https://your-app-url/health`
 
 ### **Debug Issues**
 1. Check `just health` - API working?

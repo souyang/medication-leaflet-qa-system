@@ -12,8 +12,6 @@ Production-credible RAG system for healthcare drug-label Q&A using FDA SPL data.
          [LangGraph Agent: route→retrieve→answer→verify→finalize]
                                     ↓
                          [FastAPI] ← [W&B Evals]
-                                    ↓
-                         [Next.js Frontend]
 ```
 
 ## Key Features
@@ -22,19 +20,16 @@ Production-credible RAG system for healthcare drug-label Q&A using FDA SPL data.
 - **LangGraph agent**: Multi-node verification pipeline with confidence checks
 - **Redis Stack**: HNSW vector search with metadata filtering (drug, section, version)
 - **W&B observability**: Traces and evals with regression gates
-- **Next.js Frontend**: Modern web interface with TypeScript, Tailwind, and shadcn/ui
-- **Monorepo structure**: Ready for future crawlers and frontend expansion
+- **Monorepo structure**: Ready for future crawlers and API expansion
 
 ## Quick Start
 
 ### Prerequisites
 
 - Python 3.11+
-- Node.js 18+
 - Docker & Docker Compose
 - [just](https://github.com/casey/just) (task runner)
 - [uv](https://github.com/astral-sh/uv) (Python package manager)
-- [pnpm](https://pnpm.io/) (Node.js package manager)
 - OpenAI API key
 
 ### Setup
@@ -65,21 +60,16 @@ This will:
 ### Usage
 
 ```bash
-# Start full stack (API + Web frontend)
+# Start API server
 just dev
-
-# Or start services individually:
-just dev-api    # API server on http://localhost:8000
-just dev-web    # Web frontend on http://localhost:3001
 
 # Command line usage:
 just ask Q="What is the starting dose?" DRUG="metformin"
 just ingest DRUG="aspirin"
 just eval
 
-# Deploy to Railway (production)
-just deploy     # Full-stack deployment
-just deploy-backend  # Backend only
+# Deploy to production
+just deploy     # Deploy using available methods
 
 # Check health
 just health
@@ -216,7 +206,6 @@ Environment variables (`.env`):
 ## Future Roadmap
 
 - [ ] Crawler service for automated updates
-- [ ] Next.js frontend with citation highlights
 - [ ] Advanced evals (hallucination detection, numeric accuracy)
 - [ ] Multi-label synthesis (compare drugs)
 - [ ] CI/CD with eval gates

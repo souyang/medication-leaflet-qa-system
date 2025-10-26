@@ -16,21 +16,12 @@ stop-redis:
 dev-api:
     cd apps/api && PYTHONPATH=. uv run uvicorn app.api:app --reload --port 8000
 
-# Start web frontend
-dev-web:
-    pnpm --filter web dev
-
-# Start both API and web
+# Start API server (development)
 dev:
-    @echo "Starting full stack development..."
+    @echo "Starting API development server..."
     @echo "API: http://localhost:8000"
-    @echo "Web: http://localhost:3001"
-    @echo "Press Ctrl+C to stop all services"
-    #!/usr/bin/env bash
-    trap 'kill %1 %2' SIGINT
-    just dev-api &
-    just dev-web &
-    wait
+    @echo "Press Ctrl+C to stop the service"
+    just dev-api
 
 # Create Redis index
 create-index DROP="false":
@@ -59,9 +50,22 @@ eval:
 lint:
     uv run ruff check .
 
+# Lint with auto-fix
+lint-fix:
+    uv run ruff check --fix .
+
+# Lint with auto-fix (including unsafe fixes)
+lint-fix-unsafe:
+    uv run ruff check --fix --unsafe-fixes .
+
 # Format code
 fmt:
     uv run ruff format .
+
+# Format and fix all issues
+fix-all:
+    uv run ruff format .
+    uv run ruff check --fix --unsafe-fixes .
 
 # Type check
 typecheck:
@@ -79,13 +83,12 @@ install-hooks:
 setup:
     @echo "Setting up RAG Health development environment..."
     uv sync
-    pnpm install
     just install-hooks
     just dev-redis
     @echo "Waiting for Redis..."
     sleep 3
     just seed
-    @echo "✓ Setup complete. Run 'just dev' to start both API and web frontend."
+    @echo "✓ Setup complete. Run 'just dev' to start the API server."
 
 # Health check
 health:
@@ -99,14 +102,9 @@ stats:
 up:
     docker compose -f infra/docker-compose.yml up -d
 
-# Full stack up (Docker) - Backend + Frontend
-up-fullstack:
-    docker compose -f infra/docker-compose.fullstack.yml up -d
-
 # Full stack down
 down:
     docker compose -f infra/docker-compose.yml down
-    docker compose -f infra/docker-compose.fullstack.yml down
 
 # Clean all artifacts
 clean:
@@ -114,21 +112,32 @@ clean:
     find . -type d -name "__pycache__" -exec rm -rf {} +
     find . -type d -name "*.egg-info" -exec rm -rf {} +
 
-# Deploy backend to Railway
+# Deploy to production
 deploy:
-    @echo "Deploying backend to Railway..."
-    railway up
+    @echo "Deploying to production..."
+    @echo "Use one of the deployment methods below:"
+    @echo "1. Render: just deploy-render"
+    @echo "2. Docker: just deploy-docker"
 
-# Deploy backend to Railway (alias)
-deploy-backend:
-    @echo "Deploying backend to Railway..."
-    railway up
+# Deploy to Render (recommended alternative)
+deploy-render:
+    @echo "Deploying to Render..."
+    @echo "1. Go to render.com and sign up with GitHub"
+    @echo "2. Create New Web Service"
+    @echo "3. Connect your GitHub repository"
+    @echo "4. Use these settings:"
+    @echo "   - Build Command: pip install -r requirements.txt && pip install -e packages/py/core && pip install -e packages/py/retrieval && pip install -e apps/api"
+    @echo "   - Start Command: cd apps/api && uvicorn app.api:app --host 0.0.0.0 --port $PORT"
+    @echo "   - Environment: Python 3.11"
+    @echo "5. Set environment variables: OPENAI_API_KEY, WANDB_API_KEY, WANDB_ENTITY"
 
-# Setup Railway project (first time only)
-setup-railway:
-    @echo "Setting up Railway project..."
-    @echo "1. Make sure you're logged in: railway login"
-    @echo "2. Create a new project or link to existing one:"
-    @echo "   - railway init (creates new project)"
-    @echo "   - railway link (links to existing project)"
-    @echo "3. Then run: just deploy"
+# Deploy with Docker (works on any platform)
+deploy-docker:
+    @echo "Building Docker image..."
+    docker build -t rag-health-api .
+    @echo "Docker image built successfully!"
+    @echo "You can now deploy this image to any platform that supports Docker:"
+    @echo "- AWS App Runner"
+    @echo "- Google Cloud Run"
+    @echo "- DigitalOcean App Platform"
+    @echo "- Heroku Container Registry"
