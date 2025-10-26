@@ -1,6 +1,7 @@
 """FastAPI application with RAG endpoints."""
 
 from contextlib import asynccontextmanager
+from datetime import datetime
 
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,10 +27,10 @@ async def lifespan(_app: FastAPI):
 app = FastAPI(
     title=settings.api_title,
     version=settings.api_version,
-    description="""
+    description=f"""
     ## Medication Leaflet QA System API
 
-    **Copyright © 2024 Simon Ouyang. All rights reserved.**
+    **Copyright © {datetime.now().year} Simon Ouyang. All rights reserved.**
 
     A production-ready RAG (Retrieval-Augmented Generation) system for healthcare drug-label Q&A using FDA SPL data.
 

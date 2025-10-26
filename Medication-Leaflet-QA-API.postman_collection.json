@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "medication-leaflet-qa-api",
 		"name": "Medication Leaflet QA API",
-		"description": "Comprehensive API collection for the Medication Leaflet QA System deployed on Render. This collection includes all endpoints for health checks, drug queries, ingestion, and system management.\n\n**Copyright © 2024 Simon Ouyang. All rights reserved.**",
+		"description": "Comprehensive API collection for the Medication Leaflet QA System deployed on Render. This collection includes all endpoints for health checks, drug queries, ingestion, and system management.\n\n**Copyright \u00a9 2025 Simon Ouyang. All rights reserved.**",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "medication-leaflet-qa-api"
 	},
