@@ -16,12 +16,20 @@ class RedisClient:
     def __init__(self, settings: Settings) -> None:
         """Initialize Redis client."""
         self.settings = settings
-        self.client = redis.Redis(
-            host=settings.redis_host,
-            port=settings.redis_port,
-            password=settings.redis_password,
-            decode_responses=False,  # Handle binary for embeddings
-        )
+
+        # Use REDIS_URL if available, otherwise fall back to individual parameters
+        if settings.redis_url:
+            self.client = redis.from_url(
+                settings.redis_url,
+                decode_responses=False,  # Handle binary for embeddings
+            )
+        else:
+            self.client = redis.Redis(
+                host=settings.redis_host,
+                port=settings.redis_port,
+                password=settings.redis_password,
+                decode_responses=False,  # Handle binary for embeddings
+            )
         self.index_name = settings.redis_index_name
 
     def ping(self) -> bool:

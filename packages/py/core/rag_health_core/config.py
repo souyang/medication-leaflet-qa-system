@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     )
 
     # Redis
+    redis_url: str | None = None
     redis_host: str = "localhost"
     redis_port: int = 6379
     redis_password: str | None = None
