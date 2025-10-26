@@ -90,6 +90,29 @@ app.add_middleware(
     description="Check the health status of the API and Redis connection. Returns the overall system status and Redis connectivity.",
     response_description="System health status",
     tags=["System"],
+    responses={
+        200: {
+            "description": "System health status",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "healthy": {
+                            "summary": "System is healthy",
+                            "value": {"status": "healthy", "redis": "connected"},
+                        },
+                        "degraded": {
+                            "summary": "System is degraded",
+                            "value": {"status": "degraded", "redis": "disconnected"},
+                        },
+                    }
+                }
+            },
+        },
+        503: {
+            "description": "Service Unavailable",
+            "content": {"application/json": {"example": {"detail": "Agent not initialized"}}},
+        },
+    },
 )
 async def health() -> dict[str, str]:
     """
@@ -119,6 +142,56 @@ async def health() -> dict[str, str]:
     description="Ask questions about drug labels and get AI-powered answers with citations. The system uses RAG (Retrieval-Augmented Generation) to provide grounded, cited responses.",
     response_description="AI-generated answer with citations and confidence score",
     tags=["Drug Queries"],
+    responses={
+        200: {
+            "description": "Successful query response",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "answer": "The recommended starting dose for metformin is 500mg twice daily with meals, or 850mg once daily. The maximum daily dose is 2550mg. [Section: DOSAGE_AND_ADMINISTRATION] (https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=xxx#section=34070-3)",
+                        "confidence": 0.92,
+                        "contexts": [
+                            {
+                                "text": "The usual starting dose of metformin is 500mg twice daily with meals...",
+                                "section": "DOSAGE_AND_ADMINISTRATION",
+                                "section_id": "34070-3",
+                                "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=xxx",
+                                "score": 0.95,
+                            }
+                        ],
+                        "drug": "metformin",
+                        "disclaimer": "Not medical advice. Verify via linked label.",
+                    }
+                }
+            },
+        },
+        422: {
+            "description": "Validation Error",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": [
+                            {
+                                "loc": ["body", "query"],
+                                "msg": "field required",
+                                "type": "value_error.missing",
+                            }
+                        ]
+                    }
+                }
+            },
+        },
+        500: {
+            "description": "Internal Server Error",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Query failed: Redis search failed: Error connecting to Redis"
+                    }
+                }
+            },
+        },
+    },
 )
 async def ask(request: QueryRequest) -> QueryResponse:
     """
@@ -163,6 +236,38 @@ async def ask(request: QueryRequest) -> QueryResponse:
     description="Ingest drug label data from DailyMed API. Parses SPL XML, chunks text, generates embeddings, and stores in Redis vector index.",
     response_description="Ingestion results with chunk count",
     tags=["Data Management"],
+    responses={
+        200: {
+            "description": "Drug successfully ingested",
+            "content": {
+                "application/json": {"example": {"drug": "metformin", "chunks_ingested": 45}}
+            },
+        },
+        422: {
+            "description": "Validation Error",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": [
+                            {
+                                "loc": ["path", "drug_name"],
+                                "msg": "field required",
+                                "type": "value_error.missing",
+                            }
+                        ]
+                    }
+                }
+            },
+        },
+        500: {
+            "description": "Internal Server Error",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Ingestion failed: Drug not found in DailyMed"}
+                }
+            },
+        },
+    },
 )
 async def ingest(drug_name: str) -> dict[str, int | str]:
     """
@@ -202,6 +307,38 @@ async def ingest(drug_name: str) -> dict[str, int | str]:
     description="Create or recreate the Redis search index with HNSW vector search capabilities. Required before ingesting drugs.",
     response_description="Index creation status",
     tags=["Data Management"],
+    responses={
+        200: {
+            "description": "Index created successfully",
+            "content": {
+                "application/json": {"example": {"status": "created", "index": "idx:leaflets"}}
+            },
+        },
+        422: {
+            "description": "Validation Error",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": [
+                            {
+                                "loc": ["query", "drop_existing"],
+                                "msg": "value is not a valid boolean",
+                                "type": "type_error.bool",
+                            }
+                        ]
+                    }
+                }
+            },
+        },
+        500: {
+            "description": "Internal Server Error",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Index creation failed: Redis connection error"}
+                }
+            },
+        },
+    },
 )
 async def create_index(drop_existing: bool = False) -> dict[str, str]:
     """
@@ -239,6 +376,30 @@ async def create_index(drop_existing: bool = False) -> dict[str, str]:
     description="Get statistics about the number of documents in the Redis index. Useful for monitoring data ingestion.",
     response_description="Document count statistics",
     tags=["System"],
+    responses={
+        200: {
+            "description": "Document count statistics",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "empty": {"summary": "No data ingested", "value": {"document_count": 0}},
+                        "single_drug": {
+                            "summary": "Single drug ingested",
+                            "value": {"document_count": 45},
+                        },
+                        "multiple_drugs": {
+                            "summary": "Multiple drugs ingested",
+                            "value": {"document_count": 150},
+                        },
+                    }
+                }
+            },
+        },
+        503: {
+            "description": "Service Unavailable",
+            "content": {"application/json": {"example": {"detail": "Agent not initialized"}}},
+        },
+    },
 )
 async def stats() -> dict[str, int]:
     """

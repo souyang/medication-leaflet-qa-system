@@ -62,9 +62,23 @@ class RAGState(TypedDict, total=False):
 class QueryRequest(BaseModel):
     """Request to /ask endpoint."""
 
-    query: str = Field(..., min_length=1, max_length=500)
-    drug: str | None = Field(None, description="Optional drug name filter")
-    top_k: int = Field(default=6, ge=1, le=20)
+    query: str = Field(
+        ...,
+        min_length=1,
+        max_length=500,
+        examples=[
+            "What is the starting dose for metformin?",
+            "What are the side effects of lisinopril?",
+            "What are the contraindications for atorvastatin?",
+            "What are the drug interactions with aspirin?",
+        ],
+    )
+    drug: str | None = Field(
+        None,
+        description="Optional drug name filter",
+        examples=["metformin", "lisinopril", "atorvastatin"],
+    )
+    top_k: int = Field(default=6, ge=1, le=20, examples=[6, 8, 10])
 
 
 class QueryResponse(BaseModel):
