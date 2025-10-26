@@ -1,0 +1,755 @@
+{
+	"info": {
+		"_postman_id": "medication-leaflet-qa-api",
+		"name": "Medication Leaflet QA API",
+		"description": "Comprehensive API collection for the Medication Leaflet QA System deployed on Render. This collection includes all endpoints for health checks, drug queries, ingestion, and system management.\n\n**Copyright © 2024 Simon Ouyang. All rights reserved.**",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "medication-leaflet-qa-api"
+	},
+	"item": [
+		{
+			"name": "Health & System",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "Check the health status of the API and Redis connection."
+					},
+					"response": [
+						{
+							"name": "Healthy Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/health",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"health"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"healthy\",\n    \"redis\": \"connected\"\n}"
+						}
+					]
+				},
+				{
+					"name": "System Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/stats",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"stats"
+							]
+						},
+						"description": "Get statistics about the number of documents in the system."
+					},
+					"response": [
+						{
+							"name": "Stats Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/stats",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"stats"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"document_count\": 150\n}"
+						}
+					]
+				}
+			],
+			"description": "Health check and system statistics endpoints."
+		},
+		{
+			"name": "Drug Queries",
+			"item": [
+				{
+					"name": "Ask Question - Basic",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"query\": \"What is the recommended starting dose?\",\n    \"drug\": \"metformin\",\n    \"top_k\": 6\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/ask",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ask"
+							]
+						},
+						"description": "Ask a basic question about a specific drug."
+					},
+					"response": [
+						{
+							"name": "Successful Query Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": \"What is the recommended starting dose?\",\n    \"drug\": \"metformin\",\n    \"top_k\": 6\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/ask",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"ask"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"answer\": \"The recommended starting dose for metformin is 500mg twice daily with meals, or 850mg once daily. The maximum daily dose is 2550mg. [Section: DOSAGE_AND_ADMINISTRATION] (https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=xxx#section=34070-3)\",\n    \"confidence\": 0.92,\n    \"contexts\": [\n        {\n            \"text\": \"The usual starting dose of metformin is 500mg twice daily with meals...\",\n            \"section\": \"DOSAGE_AND_ADMINISTRATION\",\n            \"section_id\": \"34070-3\",\n            \"url\": \"https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=xxx\",\n            \"score\": 0.95\n        }\n    ],\n    \"drug\": \"metformin\",\n    \"disclaimer\": \"Not medical advice. Verify via linked label.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Ask Question - Side Effects",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"query\": \"What are the common side effects?\",\n    \"drug\": \"metformin\",\n    \"top_k\": 8\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/ask",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ask"
+							]
+						},
+						"description": "Ask about side effects of a specific drug."
+					}
+				},
+				{
+					"name": "Ask Question - Contraindications",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"query\": \"What are the contraindications?\",\n    \"drug\": \"metformin\",\n    \"top_k\": 6\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/ask",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ask"
+							]
+						},
+						"description": "Ask about contraindications for a specific drug."
+					}
+				},
+				{
+					"name": "Ask Question - Drug Interaction",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"query\": \"What are the drug interactions?\",\n    \"drug\": \"metformin\",\n    \"top_k\": 6\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/ask",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ask"
+							]
+						},
+						"description": "Ask about drug interactions for a specific drug."
+					}
+				},
+				{
+					"name": "Ask Question - General (No Drug Filter)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"query\": \"What are the general guidelines for diabetes medication?\",\n    \"top_k\": 10\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/ask",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ask"
+							]
+						},
+						"description": "Ask a general question without specifying a drug (searches across all drugs)."
+					}
+				}
+			],
+			"description": "Endpoints for querying drug information and asking questions."
+		},
+		{
+			"name": "Data Management",
+			"item": [
+				{
+					"name": "Create Index",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/index/create?drop_existing=false",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"index",
+								"create"
+							],
+							"query": [
+								{
+									"key": "drop_existing",
+									"value": "false"
+								}
+							]
+						},
+						"description": "Create or recreate the Redis search index. Set drop_existing=true to recreate from scratch."
+					},
+					"response": [
+						{
+							"name": "Index Created Successfully",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/index/create?drop_existing=false",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"index",
+										"create"
+									],
+									"query": [
+										{
+											"key": "drop_existing",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"created\",\n    \"index\": \"rag_health_index\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Recreate Index (Drop Existing)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/index/create?drop_existing=true",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"index",
+								"create"
+							],
+							"query": [
+								{
+									"key": "drop_existing",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Recreate the Redis search index from scratch (drops existing data)."
+					}
+				}
+			],
+			"description": "Endpoints for managing the search index and data structure."
+		},
+		{
+			"name": "Drug Ingestion",
+			"item": [
+				{
+					"name": "Ingest Metformin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ingest/metformin",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ingest",
+								"metformin"
+							]
+						},
+						"description": "Ingest metformin drug label data from DailyMed."
+					},
+					"response": [
+						{
+							"name": "Ingestion Successful",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/ingest/metformin",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"ingest",
+										"metformin"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"drug\": \"metformin\",\n    \"chunks_ingested\": 45\n}"
+						}
+					]
+				},
+				{
+					"name": "Ingest Lisinopril",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ingest/lisinopril",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ingest",
+								"lisinopril"
+							]
+						},
+						"description": "Ingest lisinopril drug label data from DailyMed."
+					}
+				},
+				{
+					"name": "Ingest Atorvastatin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ingest/atorvastatin",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ingest",
+								"atorvastatin"
+							]
+						},
+						"description": "Ingest atorvastatin drug label data from DailyMed."
+					}
+				},
+				{
+					"name": "Ingest Levothyroxine",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ingest/levothyroxine",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ingest",
+								"levothyroxine"
+							]
+						},
+						"description": "Ingest levothyroxine drug label data from DailyMed."
+					}
+				},
+				{
+					"name": "Ingest Amlodipine",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ingest/amlodipine",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ingest",
+								"amlodipine"
+							]
+						},
+						"description": "Ingest amlodipine drug label data from DailyMed."
+					}
+				},
+				{
+					"name": "Ingest Aspirin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ingest/aspirin",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ingest",
+								"aspirin"
+							]
+						},
+						"description": "Ingest aspirin drug label data from DailyMed."
+					}
+				},
+				{
+					"name": "Ingest Ibuprofen",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ingest/ibuprofen",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ingest",
+								"ibuprofen"
+							]
+						},
+						"description": "Ingest ibuprofen drug label data from DailyMed."
+					}
+				}
+			],
+			"description": "Endpoints for ingesting drug label data from DailyMed."
+		},
+		{
+			"name": "Example Workflows",
+			"item": [
+				{
+					"name": "Complete Setup Workflow",
+					"item": [
+						{
+							"name": "1. Health Check",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/health",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"health"
+									]
+								}
+							}
+						},
+						{
+							"name": "2. Create Index",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/index/create",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"index",
+										"create"
+									]
+								}
+							}
+						},
+						{
+							"name": "3. Ingest Metformin",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/ingest/metformin",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"ingest",
+										"metformin"
+									]
+								}
+							}
+						},
+						{
+							"name": "4. Check Stats",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/stats",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"stats"
+									]
+								}
+							}
+						},
+						{
+							"name": "5. Test Query",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"query\": \"What is the starting dose?\",\n    \"drug\": \"metformin\",\n    \"top_k\": 6\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/ask",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"ask"
+									]
+								}
+							}
+						}
+					],
+					"description": "Complete workflow for setting up and testing the system."
+				},
+				{
+					"name": "Multi-Drug Setup",
+					"item": [
+						{
+							"name": "1. Create Index",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/index/create",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"index",
+										"create"
+									]
+								}
+							}
+						},
+						{
+							"name": "2. Ingest Multiple Drugs",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/ingest/metformin",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"ingest",
+										"metformin"
+									]
+								}
+							}
+						},
+						{
+							"name": "3. Ingest Lisinopril",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/ingest/lisinopril",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"ingest",
+										"lisinopril"
+									]
+								}
+							}
+						},
+						{
+							"name": "4. Ingest Atorvastatin",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/ingest/atorvastatin",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"ingest",
+										"atorvastatin"
+									]
+								}
+							}
+						},
+						{
+							"name": "5. Check Final Stats",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/stats",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"stats"
+									]
+								}
+							}
+						}
+					],
+					"description": "Workflow for setting up multiple drugs in the system."
+				}
+			],
+			"description": "Pre-configured workflows for common tasks."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://medication-leaflet-qa-system.onrender.com",
+			"type": "string"
+		}
+	]
+}

@@ -29,6 +29,8 @@ app = FastAPI(
     description="""
     ## Medication Leaflet QA System API
 
+    **Copyright © 2024 Simon Ouyang. All rights reserved.**
+
     A production-ready RAG (Retrieval-Augmented Generation) system for healthcare drug-label Q&A using FDA SPL data.
 
     ### Key Features:
@@ -56,8 +58,9 @@ app = FastAPI(
     """,
     lifespan=lifespan,
     contact={
-        "name": "Medication Leaflet QA System",
+        "name": "Simon Ouyang",
         "url": "https://github.com/souyang/medication-leaflet-qa-system",
+        "email": "simonouyang@example.com",
     },
     license_info={
         "name": "MIT",
