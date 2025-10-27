@@ -1,6 +1,7 @@
 """Ingestion service for fetching and parsing SPL XML from DailyMed."""
 
 import re
+from typing import cast
 
 import httpx
 from lxml import etree
@@ -75,7 +76,8 @@ class IngestionService:
             return None
 
         # Return first result's setid
-        return spls[0].get("setid")
+        setid = spls[0].get("setid")
+        return str(setid) if setid is not None else None
 
     async def _fetch_spl_xml(self, setid: str) -> bytes:
         """Fetch SPL XML for a given setid."""
@@ -111,10 +113,13 @@ class IngestionService:
     def _extract_ndc(self, tree: etree._Element, nsmap: dict[str, str]) -> list[str]:
         """Extract NDC codes from SPL XML."""
         ndc_codes = []
-        for code in tree.xpath(
-            "//hl7:code[@codeSystem='2.16.840.1.113883.6.69']", namespaces=nsmap
-        ):
-            if code_val := code.get("code"):
+        # xpath returns a list of _Element objects
+        code_elements: list[etree._Element] = cast(
+            list[etree._Element],
+            tree.xpath("//hl7:code[@codeSystem='2.16.840.1.113883.6.69']", namespaces=nsmap),
+        )
+        for code_element in code_elements:
+            if code_val := code_element.get("code"):
                 ndc_codes.append(code_val)
         return ndc_codes
 
@@ -123,9 +128,12 @@ class IngestionService:
         sections = {}
 
         # Find all section elements
-        for section in tree.xpath("//hl7:section", namespaces=nsmap):
+        section_elements: list[etree._Element] = cast(
+            list[etree._Element], tree.xpath("//hl7:section", namespaces=nsmap)
+        )
+        for section_element in section_elements:
             # Get section code
-            code_elem = section.find(
+            code_elem = section_element.find(
                 ".//hl7:code[@codeSystem='2.16.840.1.113883.6.1']", namespaces=nsmap
             )
             if code_elem is None:
@@ -139,8 +147,12 @@ class IngestionService:
 
             # Extract text content
             text_parts = []
-            for text_elem in section.xpath(".//hl7:text//text()", namespaces=nsmap):
-                text_parts.append(str(text_elem).strip())
+            # xpath with text() returns text nodes (strings)
+            text_nodes: list[str] = cast(
+                list[str], section_element.xpath(".//hl7:text//text()", namespaces=nsmap)
+            )
+            for text_node in text_nodes:
+                text_parts.append(str(text_node).strip())
 
             text = " ".join(text_parts).strip()
             text = re.sub(r"\s+", " ", text)  # Normalize whitespace

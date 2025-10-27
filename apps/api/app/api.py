@@ -1,5 +1,6 @@
 """FastAPI application with RAG endpoints."""
 
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from datetime import datetime
 
@@ -16,7 +17,7 @@ ingest_service: IngestionService | None = None
 
 
 @asynccontextmanager
-async def lifespan(_app: FastAPI):
+async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
     """Initialize services on startup."""
     global rag_agent, ingest_service
     rag_agent = RAGAgent(settings)
