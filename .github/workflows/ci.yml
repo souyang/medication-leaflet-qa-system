@@ -87,31 +87,41 @@ jobs:
         run: |
           echo "🧪 Running Healthcare RAG Integration Tests"
 
-          # Test API startup
-          cd apps/api && timeout 30s PYTHONPATH=. uv run uvicorn app.api:app --port 8000 &
+          # Test API startup with timeout
+          cd apps/api
+          PYTHONPATH=. uv run uvicorn app.api:app --port 8000 &
           API_PID=$!
 
-          # Wait for API to start
-          sleep 10
+          # Wait for API to start with timeout
+          echo "⏳ Waiting for API to start..."
+          for i in {1..30}; do
+            if curl -f http://localhost:8000/health 2>/dev/null; then
+              echo "✅ API started successfully after ${i} seconds"
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "❌ API failed to start within 30 seconds"
+              kill $API_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 1
+          done
 
           # Test health endpoint
-          if curl -f http://localhost:8000/health 2>/dev/null; then
-            echo "✅ API health check passed"
+          echo "🔍 Testing API endpoints..."
+          curl -f http://localhost:8000/health 2>/dev/null && echo "✅ Health endpoint accessible"
 
-            # Test stats endpoint
-            curl -f http://localhost:8000/stats 2>/dev/null && echo "✅ Stats endpoint accessible" || echo "⚠️ Stats endpoint failed (expected without Redis)"
+          # Test stats endpoint
+          curl -f http://localhost:8000/stats 2>/dev/null && echo "✅ Stats endpoint accessible" || echo "⚠️ Stats endpoint failed (expected without Redis)"
 
-            # Test ask endpoint structure (without Redis)
-            curl -f -X POST http://localhost:8000/ask \
-              -H "Content-Type: application/json" \
-              -d '{"query": "test query", "drug": "metformin"}' 2>/dev/null && echo "✅ Ask endpoint accessible" || echo "⚠️ Ask endpoint failed (expected without Redis)"
-          else
-            echo "❌ API health check failed"
-            exit 1
-          fi
+          # Test ask endpoint structure (without Redis)
+          curl -f -X POST http://localhost:8000/ask \
+            -H "Content-Type: application/json" \
+            -d '{"query": "test query", "drug": "metformin"}' 2>/dev/null && echo "✅ Ask endpoint accessible" || echo "⚠️ Ask endpoint failed (expected without Redis)"
 
           # Clean up
           kill $API_PID 2>/dev/null || true
+          sleep 2
 
           echo "✅ Healthcare RAG integration tests completed"
 
