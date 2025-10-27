@@ -31,6 +31,13 @@ app = FastAPI(
     description=f"""
 <p><strong>Copyright © {datetime.now().year} Simon Ouyang. All rights reserved.</strong></p>
 
+<p>
+<a href="https://github.com/souyang/medication-leaflet-qa-system" target="_blank">
+<img src="https://img.shields.io/github/stars/souyang/medication-leaflet-qa-system?style=social" alt="GitHub stars"/>
+</a>
+<a href="https://github.com/souyang/medication-leaflet-qa-system" target="_blank">⭐ Star this repository on GitHub</a>
+</p>
+
 <p>A production-ready RAG (Retrieval-Augmented Generation) system for healthcare drug-label Q&A using FDA SPL data.</p>
 
 <h3>Key Features</h3>
