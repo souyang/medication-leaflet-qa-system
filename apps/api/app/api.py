@@ -96,6 +96,229 @@ app.add_middleware(
 
 
 @app.get(
+    "/",
+    summary="Homepage",
+    description="Welcome page with API information and links to documentation.",
+    response_description="HTML homepage",
+    tags=["System"],
+    include_in_schema=False,  # Hide from OpenAPI docs
+)
+async def homepage():
+    """Serve the API homepage."""
+    from fastapi.responses import HTMLResponse
+    
+    html_content = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Medication Leaflet QA System - Healthcare RAG API</title>
+        <style>
+            * {{
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }}
+            body {{
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }}
+            .container {{
+                background: white;
+                border-radius: 16px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                max-width: 800px;
+                width: 100%;
+                padding: 40px;
+                animation: fadeIn 0.6s ease-in;
+            }}
+            @keyframes fadeIn {{
+                from {{ opacity: 0; transform: translateY(20px); }}
+                to {{ opacity: 1; transform: translateY(0); }}
+            }}
+            h1 {{
+                color: #667eea;
+                font-size: 2.5em;
+                margin-bottom: 10px;
+                font-weight: 700;
+            }}
+            .subtitle {{
+                color: #666;
+                font-size: 1.1em;
+                margin-bottom: 30px;
+            }}
+            .badges {{
+                display: flex;
+                gap: 10px;
+                margin-bottom: 30px;
+                flex-wrap: wrap;
+            }}
+            .badge {{
+                display: inline-block;
+                padding: 6px 12px;
+                background: #667eea;
+                color: white;
+                border-radius: 20px;
+                font-size: 0.85em;
+                font-weight: 600;
+            }}
+            .features {{
+                margin: 30px 0;
+            }}
+            .feature {{
+                display: flex;
+                align-items: start;
+                margin-bottom: 15px;
+                padding: 15px;
+                background: #f8f9ff;
+                border-radius: 8px;
+                border-left: 4px solid #667eea;
+            }}
+            .feature-icon {{
+                font-size: 1.5em;
+                margin-right: 15px;
+            }}
+            .feature-text {{
+                flex: 1;
+            }}
+            .feature-title {{
+                font-weight: 600;
+                color: #667eea;
+                margin-bottom: 5px;
+            }}
+            .links {{
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 15px;
+                margin-top: 30px;
+            }}
+            .link-card {{
+                display: block;
+                padding: 20px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                text-decoration: none;
+                border-radius: 10px;
+                text-align: center;
+                font-weight: 600;
+                transition: transform 0.2s, box-shadow 0.2s;
+            }}
+            .link-card:hover {{
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            }}
+            .link-icon {{
+                font-size: 2em;
+                display: block;
+                margin-bottom: 10px;
+            }}
+            .footer {{
+                margin-top: 40px;
+                padding-top: 20px;
+                border-top: 1px solid #eee;
+                text-align: center;
+                color: #666;
+                font-size: 0.9em;
+            }}
+            .footer a {{
+                color: #667eea;
+                text-decoration: none;
+            }}
+            .footer a:hover {{
+                text-decoration: underline;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>🏥 Medication Leaflet QA System</h1>
+            <p class="subtitle">Production-ready RAG system for healthcare drug-label Q&A</p>
+            
+            <div class="badges">
+                <span class="badge">FastAPI</span>
+                <span class="badge">LangGraph</span>
+                <span class="badge">Redis Stack</span>
+                <span class="badge">W&B</span>
+                <span class="badge">OpenAI</span>
+            </div>
+
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">✅</div>
+                    <div class="feature-text">
+                        <div class="feature-title">Grounded Answers Only</div>
+                        Every claim includes citation with source section and URL
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔄</div>
+                    <div class="feature-text">
+                        <div class="feature-title">LangGraph Agent</div>
+                        Multi-node verification pipeline with confidence checks
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-text">
+                        <div class="feature-title">Redis Stack HNSW</div>
+                        Vector search with metadata filtering for fast retrieval
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-text">
+                        <div class="feature-title">W&B Observability</div>
+                        Continuous evaluation with regression gates
+                    </div>
+                </div>
+            </div>
+
+            <div class="links">
+                <a href="/docs" class="link-card">
+                    <span class="link-icon">📚</span>
+                    API Documentation
+                </a>
+                <a href="/health" class="link-card">
+                    <span class="link-icon">💚</span>
+                    Health Check
+                </a>
+                <a href="/stats" class="link-card">
+                    <span class="link-icon">📈</span>
+                    System Stats
+                </a>
+                <a href="https://github.com/souyang/medication-leaflet-qa-system" target="_blank" class="link-card">
+                    <span class="link-icon">⭐</span>
+                    Star on GitHub
+                </a>
+            </div>
+
+            <div class="footer">
+                <p><strong>Copyright © {datetime.now().year} Simon Ouyang. All rights reserved.</strong></p>
+                <p style="margin-top: 10px;">
+                    <a href="https://www.linkedin.com/in/xi-ouyang" target="_blank">LinkedIn</a> • 
+                    <a href="https://github.com/souyang" target="_blank">GitHub</a> • 
+                    <a href="mailto:simonouyang@gmail.com">Contact</a>
+                </p>
+                <p style="margin-top: 10px; color: #999; font-size: 0.85em;">
+                    ⚠️ Not medical advice. For informational purposes only.
+                </p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
+
+
+@app.get(
     "/health",
     summary="Health Check",
     description="Check the health status of the API and Redis connection. Returns the overall system status and Redis connectivity.",
