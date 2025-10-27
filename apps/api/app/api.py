@@ -63,8 +63,8 @@ app = FastAPI(
     lifespan=lifespan,
     contact={
         "name": "Simon Ouyang",
-        "url": "https://github.com/souyang/medication-leaflet-qa-system",
-        "email": "simonouyang@example.com",
+        "url": "https://www.linkedin.com/in/xi-ouyang",
+        "email": "simonouyang@gmail.com",
     },
     license_info={
         "name": "MIT",
