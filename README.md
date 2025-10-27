@@ -228,4 +228,3 @@ This is a production-ready healthcare RAG system. Contributions are welcome for:
 ## Support
 
 For technical questions or issues, please open a GitHub issue or connect on LinkedIn.
-# CI trigger
