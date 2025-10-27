@@ -29,34 +29,36 @@ app = FastAPI(
     title=settings.api_title,
     version=settings.api_version,
     description=f"""
-    ## Medication Leaflet QA System API
+<p><strong>Copyright © {datetime.now().year} Simon Ouyang. All rights reserved.</strong></p>
 
-    **Copyright © {datetime.now().year} Simon Ouyang. All rights reserved.**
+<p>A production-ready RAG (Retrieval-Augmented Generation) system for healthcare drug-label Q&A using FDA SPL data.</p>
 
-    A production-ready RAG (Retrieval-Augmented Generation) system for healthcare drug-label Q&A using FDA SPL data.
+<h3>Key Features</h3>
+<ul>
+<li><strong>Grounded answers only</strong>: Every claim includes citation with source section and URL</li>
+<li><strong>LangGraph agent</strong>: Multi-node verification pipeline with confidence checks</li>
+<li><strong>Redis Stack</strong>: HNSW vector search with metadata filtering</li>
+<li><strong>W&B observability</strong>: Traces and evals with regression gates</li>
+</ul>
 
-    ### Key Features:
-    - **Grounded answers only**: Every claim includes citation with source section and URL
-    - **LangGraph agent**: Multi-node verification pipeline with confidence checks
-    - **Redis Stack**: HNSW vector search with metadata filtering
-    - **W&B observability**: Traces and evals with regression gates
+<h3>Architecture</h3>
+<pre>
+[DailyMed SPL XML] → [Parser] → [Chunker] → [Embeddings]
+                                    ↓
+                         [Redis Stack HNSW Index]
+                                    ↓
+     [LangGraph Agent: route→retrieve→answer→verify→finalize]
+                                    ↓
+                         [FastAPI] ← [W&B Evals]
+</pre>
 
-    ### Architecture:
-    ```
-    [DailyMed SPL XML] → [Parser] → [Chunker] → [Embeddings]
-                                        ↓
-                             [Redis Stack HNSW Index]
-                                        ↓
-         [LangGraph Agent: route→retrieve→answer→verify→finalize]
-                                        ↓
-                             [FastAPI] ← [W&B Evals]
-    ```
-
-    ### Compliance & Safety:
-    - **Data source**: Public FDA SPL labels via DailyMed API
-    - **No PHI**: System processes only publicly available drug labels
-    - **Disclaimers**: All answers include "Not medical advice" disclaimer
-    - **Citations**: Every claim linked to source section
+<h3>Compliance & Safety</h3>
+<ul>
+<li><strong>Data source</strong>: Public FDA SPL labels via DailyMed API</li>
+<li><strong>No PHI</strong>: System processes only publicly available drug labels</li>
+<li><strong>Disclaimers</strong>: All answers include "Not medical advice" disclaimer</li>
+<li><strong>Citations</strong>: Every claim linked to source section</li>
+</ul>
     """,
     lifespan=lifespan,
     contact={
