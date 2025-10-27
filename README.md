@@ -1,6 +1,6 @@
-# RAG Health POC
+# Medication Leaflet QA System
 
-Production-credible RAG system for healthcare drug-label Q&A using FDA SPL data.
+Production-ready RAG system for healthcare drug-label Q&A using FDA SPL data, Redis Stack, and W&B evaluation suite.
 
 ## Architecture
 
@@ -31,6 +31,7 @@ Production-credible RAG system for healthcare drug-label Q&A using FDA SPL data.
 - [just](https://github.com/casey/just) (task runner)
 - [uv](https://github.com/astral-sh/uv) (Python package manager)
 - OpenAI API key
+- W&B API key
 
 ### Setup
 
@@ -52,7 +53,6 @@ just setup
 
 This will:
 - Install all Python dependencies via uv workspace
-- Install all Node.js dependencies via pnpm
 - Start Redis Stack in Docker
 - Create the search index
 - Ingest 5 default drugs (metformin, lisinopril, atorvastatin, levothyroxine, amlodipine)
@@ -103,7 +103,7 @@ just stats
 ## Project Structure
 
 ```
-rag-health/
+medication-leaflet-qa-system/
 ├── apps/
 │   ├── api/              # FastAPI + LangGraph agent
 │   │   ├── app/
@@ -188,12 +188,15 @@ Environment variables (`.env`):
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `OPENAI_API_KEY` | (required) | OpenAI API key |
-| `REDIS_HOST` | localhost | Redis host |
-| `REDIS_PORT` | 6379 | Redis port |
+| `REDIS_URL` | redis://localhost:6379 | Redis connection URL |
+| `REDIS_HOST` | localhost | Redis host (fallback) |
+| `REDIS_PORT` | 6379 | Redis port (fallback) |
+| `REDIS_PASSWORD` | None | Redis password (fallback) |
 | `CHUNK_SIZE` | 1536 | Tokens per chunk |
 | `CHUNK_OVERLAP` | 150 | Overlap tokens |
 | `RETRIEVAL_TOP_K` | 6 | Max contexts per query |
 | `WANDB_PROJECT` | rag-health-poc | W&B project name |
+| `WANDB_ENTITY` | None | W&B entity/team name |
 
 ## Compliance & Safety
 
@@ -205,15 +208,23 @@ Environment variables (`.env`):
 
 ## Future Roadmap
 
-- [ ] Crawler service for automated updates
-- [ ] Advanced evals (hallucination detection, numeric accuracy)
-- [ ] Multi-label synthesis (compare drugs)
-- [ ] CI/CD with eval gates
+- [ ] Advanced hallucination detection
+- [ ] Multi-drug interaction queries
+- [ ] Real-time drug label updates
+- [ ] Enhanced evaluation metrics
 
 ## License
 
 MIT
 
-## Decision Log
+## Contributing
 
-See [DECISIONS.md](DECISIONS.md) for architectural decisions and rationales.
+This is a production-ready healthcare RAG system. Contributions are welcome for:
+- Enhanced evaluation metrics
+- Additional drug data sources
+- Performance optimizations
+- Documentation improvements
+
+## Support
+
+For technical questions or issues, please open a GitHub issue or connect on LinkedIn.

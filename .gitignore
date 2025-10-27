@@ -283,3 +283,10 @@ wandb/
 # Local development
 .local/
 local/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
