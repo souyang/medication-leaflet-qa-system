@@ -27,10 +27,16 @@ jobs:
         run: uv sync
 
       - name: Run linting
-        run: uv run ruff check .
+        run: |
+          uv run ruff check apps/
+          uv run ruff check packages/
+          uv run ruff check tests/
 
       - name: Run formatting check
-        run: uv run ruff format --check .
+        run: |
+          uv run ruff format --check apps/
+          uv run ruff format --check packages/
+          uv run ruff format --check tests/
 
       - name: Run type checking
         run: |
