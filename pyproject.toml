@@ -34,6 +34,9 @@ target-version = "py311"
 select = ["E", "F", "I", "N", "W", "UP", "B", "A", "C4", "T20", "SIM", "RET", "ARG"]
 ignore = ["E501", "B008"]
 
+[tool.ruff.lint.isort]
+known-third-party = ["wandb", "httpx", "fastapi", "uvicorn", "langchain_core", "langchain_openai", "langgraph", "tiktoken", "redis", "lxml", "pydantic", "pydantic_settings", "python_dotenv", "sentry_sdk", "tenacity", "tqdm", "typing_inspection", "uvloop", "watchfiles", "websockets", "xxhash", "zstandard"]
+
 [tool.mypy]
 python_version = "3.11"
 strict = true
