@@ -1,5 +1,7 @@
 """Integration tests requiring Redis."""
 
+import os
+
 import pytest
 from rag_health_core import ChunkMetadata, Settings
 from rag_health_retrieval import RedisClient
@@ -8,6 +10,9 @@ from rag_health_retrieval import RedisClient
 @pytest.fixture
 def settings():
     """Test settings."""
+    # Skip if required environment variables are missing
+    if not os.getenv("OPENAI_API_KEY"):
+        pytest.skip("OPENAI_API_KEY not available")
     return Settings()
 
 
