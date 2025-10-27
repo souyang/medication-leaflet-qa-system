@@ -84,6 +84,8 @@ jobs:
         run: uv sync
 
       - name: Run integration tests
+        env:
+          OPENAI_API_KEY: "test-key-for-integration-tests"
         run: |
           echo "🧪 Running Healthcare RAG Integration Tests"
 
