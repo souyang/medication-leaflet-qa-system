@@ -106,7 +106,7 @@ app.add_middleware(
 async def homepage():
     """Serve the API homepage."""
     from fastapi.responses import HTMLResponse
-    
+
     html_content = f"""
     <!DOCTYPE html>
     <html lang="en">
@@ -241,7 +241,7 @@ async def homepage():
         <div class="container">
             <h1>🏥 Medication Leaflet QA System</h1>
             <p class="subtitle">Production-ready RAG system for healthcare drug-label Q&A</p>
-            
+
             <div class="badges">
                 <span class="badge">FastAPI</span>
                 <span class="badge">LangGraph</span>
@@ -303,8 +303,8 @@ async def homepage():
             <div class="footer">
                 <p><strong>Copyright © {datetime.now().year} Simon Ouyang. All rights reserved.</strong></p>
                 <p style="margin-top: 10px;">
-                    <a href="https://www.linkedin.com/in/xi-ouyang" target="_blank">LinkedIn</a> • 
-                    <a href="https://github.com/souyang" target="_blank">GitHub</a> • 
+                    <a href="https://www.linkedin.com/in/xi-ouyang" target="_blank">LinkedIn</a> •
+                    <a href="https://github.com/souyang" target="_blank">GitHub</a> •
                     <a href="mailto:simonouyang@gmail.com">Contact</a>
                 </p>
                 <p style="margin-top: 10px; color: #999; font-size: 0.85em;">
