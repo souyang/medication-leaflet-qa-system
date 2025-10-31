@@ -34,6 +34,10 @@ class Settings(BaseSettings):
     wandb_entity: str | None = None
     wandb_api_key: str | None = None
 
+    # W&B Weave (LLM tracing)
+    weave_enabled: bool = True
+    weave_project: str = "rag-health-weave"
+
     # RAG
     chunk_size: int = 1536
     chunk_overlap: int = 150

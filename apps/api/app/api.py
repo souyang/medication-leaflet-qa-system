@@ -1,15 +1,20 @@
 """FastAPI application with RAG endpoints."""
 
+import logging
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from datetime import datetime
 
+import weave
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from rag_health_core import QueryRequest, QueryResponse, Settings
 
 from app.agent import RAGAgent
 from app.ingest import IngestionService
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 settings = Settings()
 rag_agent: RAGAgent | None = None
@@ -20,6 +25,14 @@ ingest_service: IngestionService | None = None
 async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
     """Initialize services on startup."""
     global rag_agent, ingest_service
+
+    # Initialize W&B Weave if enabled
+    if settings.weave_enabled and settings.wandb_api_key:
+        weave.init(project_name=settings.weave_project)
+        logger.info(f"✓ Weave initialized: {settings.weave_project}")
+    else:
+        logger.info("⚠ Weave disabled or W&B API key not set")
+
     rag_agent = RAGAgent(settings)
     ingest_service = IngestionService(settings)
     yield

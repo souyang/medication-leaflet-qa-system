@@ -4,6 +4,7 @@ import json
 import re
 from typing import Any
 
+import weave
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, StateGraph
@@ -11,11 +12,18 @@ from rag_health_core import QueryResponse, RAGPrompts, RAGState, Settings
 from rag_health_retrieval import EmbeddingService, RedisClient
 
 
-class RAGAgent:
-    """LangGraph-based RAG agent for drug label Q&A."""
+class RAGAgent(weave.Model):
+    """LangGraph-based RAG agent for drug label Q&A with Weave tracing."""
+
+    settings: Settings
+    redis_client: RedisClient
+    embedding_service: EmbeddingService
+    llm: ChatOpenAI
+    graph: Any
 
     def __init__(self, settings: Settings) -> None:
         """Initialize agent with Redis and LLM clients."""
+        super().__init__()
         self.settings = settings
         self.redis_client = RedisClient(settings)
         self.embedding_service = EmbeddingService(settings)
@@ -45,8 +53,16 @@ class RAGAgent:
 
         return workflow.compile()
 
+    @weave.op()
     async def query(self, query: str, drug: str | None = None, top_k: int = 6) -> QueryResponse:
-        """Execute RAG query through the agent graph."""
+        """Execute RAG query through the agent graph.
+
+        This method is traced by Weave and will log:
+        - Input: query, drug, top_k
+        - Output: QueryResponse with answer, confidence, contexts
+        - Latency: End-to-end execution time
+        - All nested operations (route, retrieve, answer, verify, finalize)
+        """
         initial_state: RAGState = {
             "query": query,
             "drug": drug,
@@ -67,6 +83,7 @@ class RAGAgent:
             drug=final_state.get("drug"),
         )
 
+    @weave.op()
     def _route_intent(self, state: RAGState) -> RAGState:
         """Node: Extract drug and target sections from query."""
         query = state["query"]
@@ -101,6 +118,7 @@ class RAGAgent:
         state["target_sections"] = sections
         return state
 
+    @weave.op()
     def _retrieve(self, state: RAGState) -> RAGState:
         """Node: Retrieve relevant contexts from Redis."""
         query = state["query"]
@@ -121,6 +139,7 @@ class RAGAgent:
         state["ctx"] = contexts
         return state
 
+    @weave.op()
     def _answer(self, state: RAGState) -> RAGState:
         """Node: Generate answer from contexts."""
         query = state["query"]
@@ -152,6 +171,7 @@ class RAGAgent:
         state["draft"] = draft
         return state
 
+    @weave.op()
     def _verify(self, state: RAGState) -> RAGState:
         """Node: Verify answer has citations and reasonable confidence."""
         draft = state["draft"]
@@ -179,6 +199,7 @@ class RAGAgent:
         state["answer"] = draft
         return state
 
+    @weave.op()
     def _finalize(self, state: RAGState) -> RAGState:
         """Node: Add disclaimer to final answer."""
         answer = state["answer"]

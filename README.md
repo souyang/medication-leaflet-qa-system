@@ -19,7 +19,7 @@ Production-ready RAG system for healthcare drug-label Q&A using FDA SPL data, Re
 - **Grounded answers only**: Every claim includes citation: `[Section: <name>] (<url>#section=<id>)`
 - **LangGraph agent**: Multi-node verification pipeline with confidence checks
 - **Redis Stack**: HNSW vector search with metadata filtering (drug, section, version)
-- **W&B observability**: Traces and evals with regression gates
+- **W&B observability**: Weave for LLM tracing + evaluation suite with regression gates
 - **Monorepo structure**: Ready for future crawlers and API expansion
 
 ## Quick Start
@@ -161,8 +161,18 @@ medication-leaflet-qa-system/
 - `text` (TEXT): chunk content
 - `emb` (VECTOR): HNSW embedding (3072-dim)
 
-## Evaluation Metrics
+## Observability & Evaluation
 
+### W&B Weave (LLM Tracing)
+Automatic tracing of every production query:
+- Full LangGraph pipeline traces
+- Token usage and cost tracking
+- Latency per node
+- Dataset building from production queries
+
+See [WEAVE_INTEGRATION.md](WEAVE_INTEGRATION.md) for setup.
+
+### W&B Evaluation Suite
 Run `just eval` to measure:
 - **Grounding rate**: % of answers with valid context
 - **Citation rate**: % of answers with proper citations
